@@ -72,10 +72,10 @@ module.exports = {
 
   buildNode(item, store, cache, createNode, createNodeId) {
     let fileNode
-    if (item.object === 'product' && item.images.length > 0) {
+    if (item.object === 'sku' && item.product.images.length > 0) {
       item.localImages___NODE = [];
 
-      item.images.forEach(async url => {
+      item.product.images.forEach(async url => {
           fileNode = await createRemoteFileNode({
           url,
           store,
