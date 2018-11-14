@@ -1,7 +1,7 @@
 const stripeClient = require('stripe');
 const stripeObject = require('./stripeObject');
 
-exports.sourceNodes = async ({ actions }, { objects = [], secretKey = "" }) => {
+exports.sourceNodes = async ({ actions, store, cache, createNodeId }, { objects = [], secretKey = "" }) => {
 
 	const { createNode } = actions;
 
@@ -28,7 +28,7 @@ exports.sourceNodes = async ({ actions }, { objects = [], secretKey = "" }) => {
 		const apiObject = await stripeObj.getApiObject(stripe);
 		const paginatedObject = await stripeObj.paginateData(stripe, apiObject);
 		stripeObj.data = paginatedObject;
-		stripeObj.buildNodes();
+		stripeObj.buildNodes(store, cache, createNode, createNodeId);
 		stripeObj.nodes.forEach(node => {
 			// Ensure that the node doesn't have
 			// an owner set before creating the node

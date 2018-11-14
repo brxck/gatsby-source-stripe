@@ -1,5 +1,6 @@
 const stripeObjects = require('./stripeObjects');
 const crypto = require('crypto');
+const { createRemoteFileNode } = require(`gatsby-source-filesystem`)
 
 module.exports = {
   init(object) {
@@ -60,17 +61,35 @@ module.exports = {
     return apiObject;
   },
 
-  buildNodes() {
+  buildNodes(store, cache, createNode, createNodeId) {
     let nodes = [];
     if (this.data.data.length) {
-      nodes = this.data.data.map(item => this.buildNode(item));
+      nodes = this.data.data.map(item => this.buildNode(item, store, cache, createNode, createNodeId));
     }
 
     this.nodes = nodes;
   },
 
-  buildNode(item) {
-    
+  buildNode(item, store, cache, createNode, createNodeId) {
+    let fileNode
+    if (item.object === 'product' && item.images.length > 0) {
+      item.localImages___NODE = [];
+
+      item.images.forEach(async url => {
+          fileNode = await createRemoteFileNode({
+          url,
+          store,
+          cache,
+          createNode,
+          createNodeId,
+        })
+        // Add reference to fileNodes
+        if (fileNode) {
+          item.localImages___NODE.push(fileNode.id);
+        }
+      })
+    }
+
     const nodeContent = JSON.stringify(item);
     const nodeContentDigest = crypto
       .createHash('md5')
@@ -81,6 +100,7 @@ module.exports = {
 
     node.internal.content = nodeContent;
     node.internal.contentDigest = nodeContentDigest;
+
 
     return node;
   },
