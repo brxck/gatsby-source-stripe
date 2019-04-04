@@ -1,4 +1,4 @@
-const { createRemoteFileNode } = require('gatsby-source-filesystem');
+const { createRemoteFileNode } = require("gatsby-source-filesystem");
 
 class LocalFile {
   constructor(createRemoteArgs) {
@@ -12,7 +12,7 @@ class LocalFile {
 
   downloadFiles(payload, type) {
     if (type === "File") return this.downloadFileNode(payload);
-    
+
     const fields = this.fileFields[type.toLowerCase()];
     if (!fields) return payload;
 
@@ -22,9 +22,10 @@ class LocalFile {
       if (!urls || !urls.length) return;
       if (!Array.isArray(urls)) urls = [urls];
 
-      const sourceObject = splitPath.length >= 1
-        ? this.getNestedObject(payload, splitPath.slice(0, -1))
-        : payload;
+      const sourceObject =
+        splitPath.length >= 1
+          ? this.getNestedObject(payload, splitPath.slice(0, -1))
+          : payload;
       sourceObject.localFiles___NODE = [];
 
       urls.forEach(async url => {
@@ -69,8 +70,8 @@ class LocalFile {
   }
 
   // Access nested objects with path given as array.
-  getNestedObject (object, path) {
-    return path.reduce((obj, key) => (obj[key]), object);
+  getNestedObject(object, path) {
+    return path.reduce((obj, key) => obj[key], object);
   }
 }
 
